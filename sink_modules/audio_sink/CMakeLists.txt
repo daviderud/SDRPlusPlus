@@ -7,12 +7,17 @@ include(${SDRPP_MODULE_CMAKE})
 
 if (MSVC)
     # Lib path
-    target_link_directories(audio_sink PRIVATE "C:/Program Files (x86)/RtAudio/lib")
+    #target_link_directories(audio_sink PRIVATE "C:/Program Files (x86)/RtAudio/lib")
+
+	#target_link_directories(audio_sink PRIVATE "d:/rud/GitHub/vcpkg/installed/x64-windows/lib")
 
     # Misc headers
-    target_include_directories(audio_sink PRIVATE "C:/Program Files (x86)/RtAudio/include/rtaudio")
+    #target_include_directories(audio_sink PRIVATE "C:/Program Files (x86)/RtAudio/include/rtaudio")
 
-    target_link_libraries(audio_sink PRIVATE rtaudio)
+	#target_include_directories(audio_sink PRIVATE "d:/rud/GitHub/vcpkg/installed/x64-windows/include/rtaudio")
+    find_package(RtAudio CONFIG REQUIRED)
+    target_link_libraries(audio_sink PRIVATE RtAudio::rtaudio)	
+	
 else (MSVC)
     find_package(PkgConfig)
 
