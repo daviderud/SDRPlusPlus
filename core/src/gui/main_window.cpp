@@ -510,7 +510,7 @@ void MainWindow::draw() {
             // ImGui::Text("Buffering: %d", (sigpath::iqFrontEnd.inputBuffer.writeCur - sigpath::iqFrontEnd.inputBuffer.readCur + 32) % 32);
 
             if (ImGui::Button("Test Bug")) {
-                flog::error("Will this make the software crash?");
+                flog::error("Will this make the software crash? DAVIDE");
             }
 
             if (ImGui::Button("Testing something")) {
@@ -590,6 +590,19 @@ void MainWindow::draw() {
                 core::configManager.conf["vfoOffsets"][gui::waterfall.selectedVFO] = vfo->generalOffset;
             }
             core::configManager.release(true);
+        }
+
+        // Handle right click
+        //if (gui::waterfall.mouseInFFT)
+        //if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+        if (gui::waterfall.mouseInFFT && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+        {
+            flog::info("Handle right click");
+            bool fftHold = core::configManager.conf["fftHold"];
+            gui::waterfall.setFFTHold(!fftHold);
+            core::configManager.acquire();
+            core::configManager.conf["fftHold"] = !fftHold;
+            core::configManager.release(true);            
         }
     }
 
