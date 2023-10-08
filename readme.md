@@ -29,7 +29,7 @@ vcpkg-cmake:x64-windows                           2023-05-04
 zstd:x64-windows                                  1.5.5               Zstandard - Fast real-time compression algorithm
 ```
 
-In addition, in the various files "CMakeLists.txt", the path to the Photos installation directory need to be updated (I have installed it in `D:/Programmi/PothosSDR/`). Use find / replace in files (for example with Notepad++). 
+In addition, in the various files "CMakeLists.txt", the path to the PothosSDR installation directory need to be updated (I have installed it in `D:/Programmi/PothosSDR/`). Use find / replace in files (for example with Notepad++). 
 
 
 ## Other tweaks
