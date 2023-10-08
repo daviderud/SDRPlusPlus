@@ -16,7 +16,7 @@ option(OPT_BUILD_BLADERF_SOURCE "Build BladeRF Source Module (Dependencies: libb
 option(OPT_BUILD_FILE_SOURCE "Wav file source" ON)
 option(OPT_BUILD_HACKRF_SOURCE "Build HackRF Source Module (Dependencies: libhackrf)" ON)
 option(OPT_BUILD_HERMES_SOURCE "Build Hermes Source Module (no dependencies required)" ON)
-option(OPT_BUILD_LIMESDR_SOURCE "Build LimeSDR Source Module (Dependencies: liblimesuite)" OFF)
+option(OPT_BUILD_LIMESDR_SOURCE "Build LimeSDR Source Module (Dependencies: liblimesuite)" ON)
 option(OPT_BUILD_PERSEUS_SOURCE "Build Perseus Source Module (Dependencies: libperseus-sdr)" OFF)
 option(OPT_BUILD_PLUTOSDR_SOURCE "Build PlutoSDR Source Module (Dependencies: libiio, libad9361)" ON)
 option(OPT_BUILD_RFSPACE_SOURCE "Build RFspace Source Module (no dependencies required)" ON)
@@ -54,6 +54,7 @@ option(OPT_BUILD_RIGCTL_CLIENT "Rigctl client to make SDR++ act as a panadapter"
 option(OPT_BUILD_RIGCTL_SERVER "Rigctl backend for controlling SDR++ with software like gpredict" ON)
 option(OPT_BUILD_SCANNER "Frequency scanner" ON)
 option(OPT_BUILD_SCHEDULER "Build the scheduler" OFF)
+option(OPT_BUILD_BOOKMARK_MANAGER "Build the Bookmark Manager module" ON)
 
 # Other options
 option(USE_INTERNAL_LIBCORRECT "Use an internal version of libcorrect" ON)
@@ -272,6 +273,10 @@ if (OPT_BUILD_SCHEDULER)
 add_subdirectory("misc_modules/scheduler")
 endif (OPT_BUILD_SCHEDULER)
 
+if (OPT_BUILD_BOOKMARK_MANAGER)
+add_subdirectory("misc_modules/bookmark_manager")
+endif (OPT_BUILD_BOOKMARK_MANAGER)
+
 add_executable(sdrpp "src/main.cpp" "win32/resources.rc")
 target_link_libraries(sdrpp PRIVATE sdrpp_core)
 
@@ -281,7 +286,7 @@ target_compile_options(sdrpp PRIVATE ${SDRPP_COMPILER_FLAGS})
 # Copy dynamic libs over
 if (MSVC)
     add_custom_target(do_always ALL xcopy /s \"$<TARGET_FILE_DIR:sdrpp_core>\\*.dll\" \"$<TARGET_FILE_DIR:sdrpp>\" /Y)
-    add_custom_target(do_always_volk ALL xcopy /s \"C:/Program Files/PothosSDR/bin\\volk.dll\" \"$<TARGET_FILE_DIR:sdrpp>\" /Y)
+    add_custom_target(do_always_volk ALL xcopy /s \"D:/Programmi/PothosSDR/bin\\volk.dll\" \"$<TARGET_FILE_DIR:sdrpp>\" /Y)
 endif ()
 
 
