@@ -129,7 +129,7 @@ namespace displaymenu {
 
     void draw(void* ctx) {
         float menuWidth = ImGui::GetContentRegionAvail().x;
-        bool homePressed = ImGui::IsKeyPressed(ImGuiKey_Home, false);
+        bool homePressed = ImGui::IsKeyPressed(ImGuiKey_F6, false);
         if (ImGui::Checkbox("Show Waterfall##_sdrpp", &showWaterfall) || homePressed) {
             if (homePressed) { showWaterfall = !showWaterfall; }
             showWaterfall ? gui::waterfall.showWaterfall() : gui::waterfall.hideWaterfall();

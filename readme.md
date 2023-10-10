@@ -1,8 +1,13 @@
-# Custom version of SDR++
+# SDR++ Davide's mod - Custom version of SDR++
 Here is a customised version of SDR++ (https://github.com/AlexandreRouma/SDRPlusPlus) for my needs.
 
 Additional features:
 - When clicking with right mouse button on FFT spectrum, toggles the Hold line;
+
+Key bindings:
+With respect to the original hotkeys (https://github.com/AlexandreRouma/SDRPlusPlus/wiki/UI-Controls#main-ui):
+- F6: Toggle waterfall.
+- F5: Start/Stop.
 
 
 ## Compiling (Windows)

@@ -31,6 +31,8 @@ namespace LoadingScreen {
         ImGui::SameLine();
         ImGui::Image(icons::LOGO, imageSize);
 
+        ImGui::Text("Davide's mod");
+
         ImVec2 origPos = ImGui::GetCursorPos();
         ImGui::SetCursorPosY(origPos.y + 50);
         ImGui::Text("%s", msg.c_str());
