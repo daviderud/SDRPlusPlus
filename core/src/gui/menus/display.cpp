@@ -136,7 +136,7 @@ namespace displaymenu {
     }
 
     void checkKeybinds() {
-        if (ImGui::IsKeyPressed(ImGuiKey_Home, false)) {
+        if (ImGui::IsKeyPressed(ImGuiKey_F6, false)) {
             setWaterfallShown(!showWaterfall);
         }
     }
