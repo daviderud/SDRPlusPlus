@@ -11,7 +11,7 @@ With respect to the original hotkeys (https://github.com/AlexandreRouma/SDRPlusP
 
 
 ## Compiling (Windows)
-Follow the instructions given here (https://github.com/AlexandreRouma/SDRPlusPlus), with exception for the installation of RtAudio that can be skipped, because it gives compilation issues.
+Follow the instructions given here (https://github.com/AlexandreRouma/SDRPlusPlus), with exception for the installation of RtAudio that can be skipped.
 
 Proceed in this way instead, by installing RtAudio as Vcpkg (https://vcpkg.io) package:
 - After installation of Vcpkg, open command prompt:
@@ -34,7 +34,6 @@ vcpkg-cmake:x64-windows                           2023-05-04
 zstd:x64-windows                                  1.5.5               Zstandard - Fast real-time compression algorithm
 ```
 
-In addition, in the various files "CMakeLists.txt", the path to the PothosSDR installation directory need to be updated (I have installed it in `D:/Programmi/PothosSDR/`). Use find / replace in files (for example with Notepad++). 
 
 
 ## Other tweaks
