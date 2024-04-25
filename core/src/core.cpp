@@ -147,7 +147,7 @@ int sdrpp_main(int argc, char* argv[]) {
     defConfig["menuElements"][3]["name"] = "Sinks";
     defConfig["menuElements"][3]["open"] = true;
 
-    defConfig["menuElements"][3]["name"] = "Frequency Manager";
+    defConfig["menuElements"][3]["name"] = "Bookmark Manager";
     defConfig["menuElements"][3]["open"] = true;
 
     defConfig["menuElements"][4]["name"] = "VFO Color";
@@ -201,7 +201,8 @@ int sdrpp_main(int argc, char* argv[]) {
 
     defConfig["moduleInstances"]["Radio"] = "radio";
 
-    defConfig["moduleInstances"]["Frequency Manager"] = "frequency_manager";
+    defConfig["moduleInstances"]["Bookmark Manager"] = "bookmark_manager";
+    // defConfig["moduleInstances"]["Frequency Manager"] = "frequency_manager";
     defConfig["moduleInstances"]["Recorder"] = "recorder";
     defConfig["moduleInstances"]["Rigctl Server"] = "rigctl_server";
     // defConfig["moduleInstances"]["Rigctl Client"] = "rigctl_client";
@@ -290,6 +291,7 @@ int sdrpp_main(int argc, char* argv[]) {
     core::configManager.conf["modules"][modCount++] = "meteor_demodulator.so";
     core::configManager.conf["modules"][modCount++] = "radio.so";
 
+    core::configManager.conf["modules"][modCount++] = "bookmark_manager.so";
     core::configManager.conf["modules"][modCount++] = "frequency_manager.so";
     core::configManager.conf["modules"][modCount++] = "recorder.so";
     core::configManager.conf["modules"][modCount++] = "rigctl_server.so";
