@@ -365,6 +365,10 @@ jobs:
         - name: Create Build Environment
           run: rm -rf ${{runner.workspace}}/build && cmake -E make_directory ${{runner.workspace}}/build
         
+        - name: Add bookmarks manager
+        working-directory: ${{runner.workspace}}/SDRPlusPlus/misc_modules/
+        run: git clone https://github.com/darauble/bookmark_manager
+
         - name: Prepare CMake
           working-directory: ${{runner.workspace}}/build
           run: cmake $GITHUB_WORKSPACE -DOPT_BUILD_BLADERF_SOURCE=ON -DOPT_BUILD_LIMESDR_SOURCE=ON -DOPT_BUILD_SDRPLAY_SOURCE=ON -DOPT_BUILD_NEW_PORTAUDIO_SINK=ON -DOPT_BUILD_M17_DECODER=ON -DOPT_BUILD_USRP_SOURCE=ON -DOPT_BUILD_PERSEUS_SOURCE=ON
@@ -396,6 +400,11 @@ jobs:
         - name: Build container
           working-directory: ${{runner.workspace}}/android-sdr-kit
           run: docker build --progress=plain -t android-sdr-kit .
+
+        - name: Add bookmarks manager
+          working-directory: ${{runner.workspace}}/SDRPlusPlus/misc_modules/
+          run: git clone https://github.com/darauble/bookmark_manager
+
 
         - name: Build
           run: docker run --name build -v $GITHUB_WORKSPACE:/root/SDRPlusPlus android-sdr-kit /bin/bash -l -c "cd /root/SDRPlusPlus/android && gradle --info assembleDebug"
