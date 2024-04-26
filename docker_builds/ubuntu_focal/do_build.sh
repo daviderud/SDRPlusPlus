@@ -25,6 +25,13 @@ make install
 ldconfig
 cd ..
 
+# name: Add bookmarks manager
+cd SDRPlusPlus
+cd misc_modules
+git clone https://github.com/darauble/bookmark_manager
+cd ..
+cd ..
+
 cd SDRPlusPlus
 mkdir build
 cd build

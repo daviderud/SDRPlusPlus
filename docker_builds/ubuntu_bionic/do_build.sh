@@ -62,6 +62,13 @@ echo 'Version: 0.7' >> /usr/share/pkgconfig/codec2.pc
 echo 'Libs: -L/usr/include/x86_64-linux-gnu/ -lcodec2' >> /usr/share/pkgconfig/codec2.pc
 echo 'Cflags: -I/usr/include/codec2' >> /usr/share/pkgconfig/codec2.pc
 
+# name: Add bookmarks manager
+cd SDRPlusPlus
+cd misc_modules
+git clone https://github.com/darauble/bookmark_manager
+cd ..
+cd ..
+
 # Build SDR++ Itself
 cd SDRPlusPlus
 mkdir build
