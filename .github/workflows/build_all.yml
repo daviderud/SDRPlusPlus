@@ -366,8 +366,8 @@ jobs:
           run: rm -rf ${{runner.workspace}}/build && cmake -E make_directory ${{runner.workspace}}/build
         
         - name: Add bookmarks manager
-        working-directory: ${{runner.workspace}}/SDRPlusPlus/misc_modules/
-        run: git clone https://github.com/darauble/bookmark_manager
+          working-directory: ${{runner.workspace}}/SDRPlusPlus/misc_modules/
+          run: git clone https://github.com/darauble/bookmark_manager
 
         - name: Prepare CMake
           working-directory: ${{runner.workspace}}/build
