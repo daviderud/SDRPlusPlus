@@ -58,7 +58,7 @@ cp $build_dir/source_modules/spyserver_source/Release/spyserver_source.dll sdrpp
 
 # Copy sink modules
 cp $build_dir/sink_modules/audio_sink/Release/audio_sink.dll sdrpp_windows_x64/modules/
-#cp "C:/Program Files (x86)/RtAudio/bin/rtaudio.dll" sdrpp_windows_x64/
+cp "C:/Program Files (x86)/RtAudio/bin/rtaudio.dll" sdrpp_windows_x64/
 
 cp $build_dir/sink_modules/network_sink/Release/network_sink.dll sdrpp_windows_x64/modules/
 
