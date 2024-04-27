@@ -1,4 +1,4 @@
-name: Build Binaries
+name: Build Binaries except raspbpi
 
 on:
     # push:
