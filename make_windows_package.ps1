@@ -62,6 +62,9 @@ cp "C:/Program Files (x86)/RtAudio/bin/rtaudio.dll" sdrpp_windows_x64/
 
 cp $build_dir/sink_modules/network_sink/Release/network_sink.dll sdrpp_windows_x64/modules/
 
+cp $build_dir/sink_modules/new_portaudio_sink/Release/new_portaudio_sink.dll sdrpp_windows_x64/modules/
+# TODO: also portaudio.dll need to be copied in the package
+
 
 # Copy decoder modules
 cp $build_dir/decoder_modules/m17_decoder/Release/m17_decoder.dll sdrpp_windows_x64/modules/
