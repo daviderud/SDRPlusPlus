@@ -4,6 +4,7 @@ Here is a customised version of SDR++ (https://github.com/AlexandreRouma/SDRPlus
 Additional features:
 - When clicking with right mouse button on FFT spectrum, toggles the Hold line;
 - Bookmarks manager (https://github.com/darauble/bookmark_manager) in place of the standard Frequency Manager;
+- SSB (USB and LSB) max bandwidth 24 kHz in place of 12 kHz;
 
 Key bindings:
 With respect to the original hotkeys (https://github.com/AlexandreRouma/SDRPlusPlus/wiki/UI-Controls#main-ui):
