@@ -1,13 +1,13 @@
 name: Build Binaries except raspbpi
 
 on:
-    push:
-        branches-ignore:
-        - nightly
-    pull_request:
-        branches-ignore:
-        - nightly
-    # workflow_dispatch
+    # push:
+    #     branches-ignore:
+    #     - nightly
+    # pull_request:
+    #     branches-ignore:
+    #     - nightly
+    workflow_dispatch
 
 env:
     # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
