@@ -12,6 +12,7 @@ option(OPT_OVERRIDE_STD_FILESYSTEM "Use a local version of std::filesystem on sy
 option(OPT_BUILD_AIRSPY_SOURCE "Build Airspy Source Module (Dependencies: libairspy)" ON)
 option(OPT_BUILD_AIRSPYHF_SOURCE "Build Airspy HF+ Source Module (Dependencies: libairspyhf)" ON)
 option(OPT_BUILD_AUDIO_SOURCE "Build Audio Source Module (Dependencies: rtaudio)" ON)
+option(OPT_BUILD_BADGESDR_SOURCE "Build BadgeSDR Source Module (Dependencies: libusb)" OFF)
 option(OPT_BUILD_BLADERF_SOURCE "Build BladeRF Source Module (Dependencies: libbladeRF)" OFF)
 option(OPT_BUILD_FILE_SOURCE "Wav file source" ON)
 option(OPT_BUILD_HACKRF_SOURCE "Build HackRF Source Module (Dependencies: libhackrf)" ON)
@@ -25,6 +26,7 @@ endif()
 option(OPT_BUILD_NETWORK_SOURCE "Build Network Source Module (no dependencies required)" ON)
 option(OPT_BUILD_PERSEUS_SOURCE "Build Perseus Source Module (Dependencies: libperseus-sdr)" OFF)
 option(OPT_BUILD_PLUTOSDR_SOURCE "Build PlutoSDR Source Module (Dependencies: libiio, libad9361)" ON)
+option(OPT_BUILD_RFNM_SOURCE "Build RFNM Source Module (Dependencies: librfnm)" OFF)
 option(OPT_BUILD_RFSPACE_SOURCE "Build RFspace Source Module (no dependencies required)" ON)
 option(OPT_BUILD_RTL_SDR_SOURCE "Build RTL-SDR Source Module (Dependencies: librtlsdr)" ON)
 option(OPT_BUILD_RTL_TCP_SOURCE "Build RTL-TCP Source Module (no dependencies required)" ON)
@@ -71,6 +73,7 @@ option(OPT_BUILD_BOOKMARK_MANAGER "Build the Bookmark Manager module" ON)
 # Other options
 option(USE_INTERNAL_LIBCORRECT "Use an internal version of libcorrect" ON)
 option(USE_BUNDLE_DEFAULTS "Set the default resource and module directories to the right ones for a MacOS .app" OFF)
+option(COPY_MSVC_REDISTRIBUTABLES "Copy over the Visual C++ Redistributable" OFF)
 
 # Module cmake path
 set(SDRPP_MODULE_CMAKE "${CMAKE_SOURCE_DIR}/sdrpp_module.cmake")
@@ -135,6 +138,10 @@ if (OPT_BUILD_AUDIO_SOURCE)
 add_subdirectory("source_modules/audio_source")
 endif (OPT_BUILD_AUDIO_SOURCE)
 
+if (OPT_BUILD_BADGESDR_SOURCE)
+add_subdirectory("source_modules/badgesdr_source")
+endif (OPT_BUILD_BADGESDR_SOURCE)
+
 if (OPT_BUILD_BLADERF_SOURCE)
 add_subdirectory("source_modules/bladerf_source")
 endif (OPT_BUILD_BLADERF_SOURCE)
@@ -166,6 +173,10 @@ endif (OPT_BUILD_PERSEUS_SOURCE)
 if (OPT_BUILD_PLUTOSDR_SOURCE)
 add_subdirectory("source_modules/plutosdr_source")
 endif (OPT_BUILD_PLUTOSDR_SOURCE)
+
+if (OPT_BUILD_RFNM_SOURCE)
+add_subdirectory("source_modules/rfnm_source")
+endif (OPT_BUILD_RFNM_SOURCE)
 
 if (OPT_BUILD_RFSPACE_SOURCE)
 add_subdirectory("source_modules/rfspace_source")
@@ -316,6 +327,21 @@ target_compile_options(sdrpp PRIVATE ${SDRPP_COMPILER_FLAGS})
 if (MSVC)
     add_custom_target(do_always ALL xcopy /s \"$<TARGET_FILE_DIR:sdrpp_core>\\*.dll\" \"$<TARGET_FILE_DIR:sdrpp>\" /Y)
     add_custom_target(do_always_volk ALL xcopy /s \"C:/Program Files/PothosSDR/bin\\volk.dll\" \"$<TARGET_FILE_DIR:sdrpp>\" /Y)
+
+    if (COPY_MSVC_REDISTRIBUTABLES)
+        # Get the list of Visual C++ runtime DLLs
+        set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP True)
+        include(InstallRequiredSystemLibraries)
+
+        # Create a space sperated list
+        set(REDIST_DLLS_STR "")
+        foreach(DLL IN LISTS CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS)
+            set(REDIST_DLLS_STR COMMAND xcopy /F \"${DLL}\" \"$<TARGET_FILE_DIR:sdrpp>\" /Y ${REDIST_DLLS_STR})
+        endforeach()
+        
+        # Create target
+        add_custom_target(do_always_msvc ALL ${REDIST_DLLS_STR})
+    endif ()
 endif ()
 
 
@@ -357,3 +383,5 @@ endif ()
 # Create uninstall target
 configure_file(${CMAKE_SOURCE_DIR}/cmake_uninstall.cmake ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake @ONLY)
 add_custom_target(uninstall ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+
+# Create headers target

@@ -9,7 +9,12 @@
 #include <gui/smgui.h>
 #include <utils/optionlist.h>
 #include <codecvt>
+#include <locale>
 #include <aaroniartsaapi.h>
+
+#ifndef _WIN32
+#include <unistd.h>
+#endif
 
 #define CONCAT(a, b) ((std::string(a) + b).c_str())
 
@@ -189,7 +194,6 @@ public:
 
         // Set samplerate
         samplerate = sampleRateList.value(srId);
-        core::setInputSampleRate(samplerate.effective);
 
         // Close device
         AARTSAAPI_CloseDevice(&api, &dev);
@@ -329,9 +333,10 @@ private:
         SmGui::FillWidth();
         SmGui::ForceSync();
         if (SmGui::Combo(CONCAT("##_spectran_dev_", _this->name), &_this->devId, _this->devList.txt)) {
-            
+            _this->selectSerial(_this->devList.key(_this->devId));
+            core::setInputSampleRate(_this->samplerate.effective);
         }
-        // TODO: SR sel
+        
         if (SmGui::Combo(CONCAT("##_spectran_sr_", _this->name), &_this->srId, _this->sampleRateList.txt)) {
             _this->samplerate = _this->sampleRateList.value(_this->srId);
             core::setInputSampleRate(_this->samplerate.effective);
