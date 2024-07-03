@@ -2787,7 +2787,17 @@ bool ImGui::SliderBehaviorT(const ImRect& bb, ImGuiID id, ImGuiDataType data_typ
         if (bb.Contains(g.IO.MousePos)) {
             auto wheel = g.IO.MouseWheel;
             if (axis == ImGuiAxis_X) wheel = -wheel; // just coincidence
-            auto stepPerPixel = fabs((double)v_max - (double)v_min) / std::max(bb.GetHeight(), bb.GetWidth());
+            double speed_factor = 2.0;
+            bool shift_pressed = g.IO.KeyShift;
+            bool left_shift_pressed = shift_pressed && (g.IO.KeyMods & ImGuiKeyModFlags_Shift) != 0;
+            bool alt_pressed = g.IO.KeyAlt;
+            bool left_alt_pressed = alt_pressed && (g.IO.KeyMods & ImGuiKeyModFlags_Alt) != 0;
+            if(left_shift_pressed) {
+                speed_factor = 10.0;
+            } else if (left_alt_pressed) {
+                speed_factor = 1.0;
+            }
+            auto stepPerPixel = fabs((double)v_max - (double)v_min) / std::max(bb.GetHeight(), bb.GetWidth()) * speed_factor;
             auto oldv = *v;
             if (wheel > 0) { // scroll up -> fewer
                 *v -= stepPerPixel;
