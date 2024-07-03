@@ -2,9 +2,10 @@
 Here is a customised version of SDR++ (https://github.com/AlexandreRouma/SDRPlusPlus) for my needs.
 
 Additional features:
-- When clicking with right mouse button on FFT spectrum, toggles the Hold line;
+- When clicking with right mouse button on FFT spectrum, toggles the Hold line (checkbox management to be added);
 - Bookmarks manager (https://github.com/darauble/bookmark_manager) in place of the standard Frequency Manager;
-- SSB (USB and LSB) max bandwidth 24 kHz in place of 12 kHz;
+- SSB (USB and LSB) max bandwidth 24 kHz in place of 12 kHz (from https://github.com/ericek111/SDRPlusPlus/tree/om2lt);
+- Zoom, Max, Min sliders operating with mouse wheel, left Shift key and left Alt key to change step (adapted from https://github.com/sannysanoff/SDRPlusPlusBrown/);
 
 Key bindings:
 With respect to the original hotkeys (https://github.com/AlexandreRouma/SDRPlusPlus/wiki/UI-Controls#main-ui):
