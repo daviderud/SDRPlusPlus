@@ -2783,24 +2783,16 @@ bool ImGui::SliderBehaviorT(const ImRect& bb, ImGuiID id, ImGuiDataType data_typ
 
     // Process interacting with the slider
     bool value_changed = false;
-    if (g.IO.MouseWheel != 0) {
-        if (bb.Contains(g.IO.MousePos)) {
+    if (bb.Contains(g.IO.MousePos)) {
+        ImGui::SetKeyOwner(ImGuiKey_MouseWheelY, id);
+        if (g.IO.MouseWheel != 0) {
             auto wheel = g.IO.MouseWheel;
             if (axis == ImGuiAxis_X) wheel = -wheel; // just coincidence
-            double speed_factor = 2.0;
-            bool shift_pressed = g.IO.KeyShift;
-            bool left_shift_pressed = shift_pressed && (g.IO.KeyMods & ImGuiKeyModFlags_Shift) != 0;
-            bool alt_pressed = g.IO.KeyAlt;
-            bool left_alt_pressed = alt_pressed && (g.IO.KeyMods & ImGuiKeyModFlags_Alt) != 0;
-            if(left_shift_pressed) {
-                speed_factor = 10.0;
-            } else if (left_alt_pressed) {
-                speed_factor = 1.0;
-            }
-            auto stepPerPixel = fabs((double)v_max - (double)v_min) / std::max(bb.GetHeight(), bb.GetWidth()) * speed_factor;
+            auto step = fabs((double)v_max - (double)v_min) / 100.0f;
+            step *= fabs(wheel) * fabs(wheel) * fabs(wheel); // cubic scale depends on wheel speed
             auto oldv = *v;
             if (wheel > 0) { // scroll up -> fewer
-                *v -= stepPerPixel;
+                *v -= step;
                 if (*v == oldv) {   // step too small for int bars
                     (*v)--;
                 }
@@ -2808,7 +2800,7 @@ bool ImGui::SliderBehaviorT(const ImRect& bb, ImGuiID id, ImGuiDataType data_typ
                     *v = std::min(v_min, v_max);
                 value_changed = true;
             } else {
-                *v += stepPerPixel;
+                *v += step;
                 if (*v == oldv) {   // step too small for int bars
                     (*v)++;
                 }
@@ -2818,6 +2810,7 @@ bool ImGui::SliderBehaviorT(const ImRect& bb, ImGuiID id, ImGuiDataType data_typ
             }
         }
     }
+
     if (g.ActiveId == id)
     {
         bool set_new_value = false;
