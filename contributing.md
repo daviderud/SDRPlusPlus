@@ -1,6 +1,6 @@
 # Pull Requests
 
-Code pull requests are **NOT welcome**. Please open an issue discussing potential bugfixes or feature requests instead.
+I don't have much time to work on this but you are free to pull request if you wish.
 
 ## Band Frequency Allocation 
 
