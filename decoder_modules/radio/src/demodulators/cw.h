@@ -81,9 +81,9 @@ namespace demod {
         const char* getName() { return "CW"; }
         double getIFSampleRate() { return 3000.0; }
         double getAFSampleRate() { return getIFSampleRate(); }
-        double getDefaultBandwidth() { return 200.0; }
-        double getMinBandwidth() { return 50.0; }
-        double getMaxBandwidth() { return 500.0; }
+        double getDefaultBandwidth() { return 500.0; }
+        double getMinBandwidth() { return 10.0; }
+        double getMaxBandwidth() { return getIFSampleRate() / 2.0; }
         bool getBandwidthLocked() { return false; }
         double getDefaultSnapInterval() { return 10.0; }
         int getVFOReference() { return ImGui::WaterfallVFO::REF_CENTER; }
@@ -102,7 +102,7 @@ namespace demod {
 
         float agcAttack = 100.0f;
         float agcDecay = 5.0f;
-        int tone = 800;
+        int tone = 700;
 
         EventHandler<float> afbwChangeHandler;
     };

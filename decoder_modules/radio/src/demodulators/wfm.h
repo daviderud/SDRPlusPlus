@@ -64,12 +64,9 @@ namespace demod {
             // Load RDS region
             if (rdsRegions.keyExists(rdsRegionStr)) {
                 rdsRegionId = rdsRegions.keyId(rdsRegionStr);
-                rdsRegion = rdsRegions.value(rdsRegionId);
             }
             else {
                 rdsRegion = RDS_REGION_EUROPE;
-                rdsRegionId = rdsRegions.valueId(rdsRegion);
-            }
 
             // Init DSP
             demod.init(input, bandwidth / 2.0f, getIFSampleRate(), _stereo, _lowPass, _rds);
@@ -79,19 +76,16 @@ namespace demod {
             diagHandler.init(&reshape.out, _diagHandler, this);
 
             // Init RDS display
-            diag.lines.push_back(-0.8);
-            diag.lines.push_back(0.8);
-        }
-
-        void start() {
-            demod.start();
-            rdsDemod.start();
-            hs.start();
             reshape.start();
             diagHandler.start();
         }
 
         void stop() {
+            agc.stop();
+            costas.stop();
+            fir.stop();
+            costas2.stop();
+            c2r.stop();
             demod.stop();
             rdsDemod.stop();
             hs.stop();
@@ -106,17 +100,8 @@ namespace demod {
                 _config->conf[name][getName()]["stereo"] = _stereo;
                 _config->release(true);
             }
-            if (ImGui::Checkbox(("Low Pass##_radio_wfm_lowpass_" + name).c_str(), &_lowPass)) {
                 demod.setLowPass(_lowPass);
                 _config->acquire();
-                _config->conf[name][getName()]["lowPass"] = _lowPass;
-                _config->release(true);
-            }
-            if (ImGui::Checkbox(("Decode RDS##_radio_wfm_rds_" + name).c_str(), &_rds)) {
-                demod.setRDSOut(_rds);
-                _config->acquire();
-                _config->conf[name][getName()]["rds"] = _rds;
-                _config->release(true);
             }
 
             // TODO: This might break when the entire radio module is disabled
@@ -132,15 +117,12 @@ namespace demod {
             if (ImGui::Combo(("##_radio_wfm_rds_region_" + name).c_str(), &rdsRegionId, rdsRegions.txt)) {
                 rdsRegion = rdsRegions.value(rdsRegionId);
                 _config->acquire();
-                _config->conf[name][getName()]["rdsRegion"] = rdsRegions.key(rdsRegionId);
                 _config->release(true);
             }
             if (!_rds) { ImGui::EndDisabled(); }
 
             float menuWidth = ImGui::GetContentRegionAvail().x;
 
-            if (_rds && _rdsInfo) {
-                ImGui::BeginTable(("##radio_wfm_rds_info_tbl_" + name).c_str(), 2, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders);
                 if (rdsDecode.piCodeValid()) {
                     ImGui::TableNextRow();
                     ImGui::TableSetColumnIndex(0);
@@ -257,10 +239,10 @@ namespace demod {
         // ============= INFO =============
 
         const char* getName() { return "WFM"; }
-        double getIFSampleRate() { return 250000.0; }
+        double getIFSampleRate() { return 240000.0; }
         double getAFSampleRate() { return getIFSampleRate(); }
-        double getDefaultBandwidth() { return 150000.0; }
-        double getMinBandwidth() { return 50000.0; }
+        double getDefaultBandwidth() { return 200000.0; }
+        double getMinBandwidth() { return 24000.0; }
         double getMaxBandwidth() { return getIFSampleRate(); }
         bool getBandwidthLocked() { return false; }
         double getDefaultSnapInterval() { return 100000.0; }

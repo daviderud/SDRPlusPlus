@@ -1,14 +1,16 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.13...3.25.1)
 project(sdrpp)
 
 # Backends
 option(OPT_BACKEND_GLFW "Use the GLFW backend" ON)
 option(OPT_BACKEND_ANDROID "Use the Android backend" OFF)
+option(OPT_BACKEND_SDL2 "Use the SDL2 backend" OFF)
 
 # Compatibility Options
 option(OPT_OVERRIDE_STD_FILESYSTEM "Use a local version of std::filesystem on systems that don't have it yet" OFF)
 
 # Sources
+option(OPT_BUILD_TEST_SOURCE "Test source" ON)
 option(OPT_BUILD_AIRSPY_SOURCE "Build Airspy Source Module (Dependencies: libairspy)" ON)
 option(OPT_BUILD_AIRSPYHF_SOURCE "Build Airspy HF+ Source Module (Dependencies: libairspyhf)" ON)
 option(OPT_BUILD_AUDIO_SOURCE "Build Audio Source Module (Dependencies: rtaudio)" ON)
@@ -60,7 +62,6 @@ option(OPT_BUILD_RADIO "Main audio modulation decoder (AM, FM, SSB, etc...)" ON)
 option(OPT_BUILD_WEATHER_SAT_DECODER "Build the HRPT decoder module (no dependencies required)" OFF)
 
 # Misc
-option(OPT_BUILD_DISCORD_PRESENCE "Build the Discord Rich Presence module" ON)
 option(OPT_BUILD_FREQUENCY_MANAGER "Build the Frequency Manager module" ON)
 option(OPT_BUILD_IQ_EXPORTER "Build the IQ Exporter module" ON)
 option(OPT_BUILD_RECORDER "Audio and baseband recorder" ON)
@@ -126,6 +127,10 @@ endif (ANDROID)
 add_subdirectory("core")
 
 # Source modules
+if (OPT_BUILD_TEST_SOURCE)
+add_subdirectory("source_modules/test_source")
+endif (OPT_BUILD_TEST_SOURCE)
+
 if (OPT_BUILD_AIRSPY_SOURCE)
 add_subdirectory("source_modules/airspy_source")
 endif (OPT_BUILD_AIRSPY_SOURCE)
@@ -157,6 +162,10 @@ endif (OPT_BUILD_HACKRF_SOURCE)
 if (OPT_BUILD_HERMES_SOURCE)
 add_subdirectory("source_modules/hermes_source")
 endif (OPT_BUILD_HERMES_SOURCE)
+
+if (OPT_BUILD_HPSDR_SOURCE)
+add_subdirectory("source_modules/hpsdr_source")
+endif (OPT_BUILD_HPSDR_SOURCE)
 
 if (OPT_BUILD_LIMESDR_SOURCE)
 add_subdirectory("source_modules/limesdr_source")
@@ -276,10 +285,6 @@ endif (OPT_BUILD_WEATHER_SAT_DECODER)
 
 
 # Misc
-if (OPT_BUILD_DISCORD_PRESENCE)
-add_subdirectory("misc_modules/discord_integration")
-endif (OPT_BUILD_DISCORD_PRESENCE)
-
 if (OPT_BUILD_FREQUENCY_MANAGER)
 add_subdirectory("misc_modules/frequency_manager")
 endif (OPT_BUILD_FREQUENCY_MANAGER)

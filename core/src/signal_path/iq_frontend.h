@@ -8,19 +8,16 @@
 #include "../dsp/channel/rx_vfo.h"
 #include "../dsp/sink/handler_sink.h"
 #include "../dsp/math/conjugate.h"
+#include "../dsp/window/window.h"
 #include <fftw3.h>
 
 class IQFrontEnd {
 public:
     ~IQFrontEnd();
 
-    enum FFTWindow {
-        RECTANGULAR,
-        BLACKMAN,
-        NUTTALL
-    };
+    void init(dsp::stream<dsp::complex_t>* in, double sampleRate, bool buffering, int decimRatio, bool dcBlocking, int fftSize, double fftRate, dsp::window::windowType fftWindow, float* (*acquireFFTBuffer)(void* ctx), void (*releaseFFTBuffer)(void* ctx), void* fftCtx);
 
-    void init(dsp::stream<dsp::complex_t>* in, double sampleRate, bool buffering, int decimRatio, bool dcBlocking, int fftSize, double fftRate, FFTWindow fftWindow, float* (*acquireFFTBuffer)(void* ctx), void (*releaseFFTBuffer)(void* ctx), void* fftCtx);
+    void updateFFTSize();
 
     void setInput(dsp::stream<dsp::complex_t>* in);
     void setSampleRate(double sampleRate);
@@ -39,7 +36,7 @@ public:
 
     void setFFTSize(int size);
     void setFFTRate(double rate);
-    void setFFTWindow(FFTWindow fftWindow);
+    void setFFTWindow(dsp::window::windowType fftWindow);
 
     void flushInputBuffer();
 
@@ -88,7 +85,7 @@ protected:
     double _decimRatio;
     int _fftSize;
     double _fftRate;
-    FFTWindow _fftWindow;
+    dsp::window::windowType _fftWindow;
     float* (*_acquireFFTBuffer)(void* ctx);
     void (*_releaseFFTBuffer)(void* ctx);
     void* _fftCtx;

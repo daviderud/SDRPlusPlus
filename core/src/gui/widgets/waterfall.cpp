@@ -7,6 +7,8 @@
 #include <utils/flog.h>
 #include <gui/gui.h>
 #include <gui/style.h>
+#include "fft_scaler.h"
+
 
 float DEFAULT_COLOR_MAP[][3] = {
     { 0x00, 0x00, 0x20 },
@@ -24,41 +26,28 @@ float DEFAULT_COLOR_MAP[][3] = {
     { 0x4A, 0x00, 0x00 }
 };
 
-// TODO: Fix this hacky BS
-
-double freq_ranges[] = {
-    1.0, 2.0, 2.5, 5.0,
-    10.0, 20.0, 25.0, 50.0,
-    100.0, 200.0, 250.0, 500.0,
-    1000.0, 2000.0, 2500.0, 5000.0,
-    10000.0, 20000.0, 25000.0, 50000.0,
-    100000.0, 200000.0, 250000.0, 500000.0,
-    1000000.0, 2000000.0, 2500000.0, 5000000.0,
-    10000000.0, 20000000.0, 25000000.0, 50000000.0
-};
-
 inline double findBestRange(double bandwidth, int maxSteps) {
-    for (int i = 0; i < 32; i++) {
-        if (bandwidth / freq_ranges[i] < (double)maxSteps) {
-            return freq_ranges[i];
-        }
+    double step = std::pow(10, std::floor(std::log10(bandwidth/maxSteps)));
+    for(int i = 0; i < 3; ++i) {
+        if(bandwidth/step <= maxSteps)
+            break;
+        step *= (i & 1) ? 2.5 : 2.0;
     }
-    return 50000000.0;
+    return step;
 }
 
-inline void printAndScale(double freq, char* buf) {
-    double freqAbs = fabs(freq);
+inline int printAndScale(char *buf, size_t maxlen, double freq) {
+    uint64_t freqAbs = fabs(freq);
     if (freqAbs < 1000) {
-        sprintf(buf, "%.6g", freq);
-    }
-    else if (freqAbs < 1000000) {
-        sprintf(buf, "%.6lgK", freq / 1000.0);
+        return snprintf(buf, maxlen, "%.9g", freq);
+    } else if (freqAbs < 1000000) {
+        return snprintf(buf, maxlen, "%.9lgk", freq / 1000.0);
     }
     else if (freqAbs < 1000000000) {
-        sprintf(buf, "%.6lgM", freq / 1000000.0);
+        return snprintf(buf, maxlen, "%.9lgM", freq / 1000000.0);
     }
-    else if (freqAbs < 1000000000000) {
-        sprintf(buf, "%.6lgG", freq / 1000000000.0);
+    else {
+        return snprintf(buf, maxlen, "%.9lgG", freq / 1000000000.0);
     }
 }
 
@@ -146,7 +135,7 @@ namespace ImGui {
         double startFreq = ceilf(lowerFreq / range) * range;
         double horizScale = (double)dataWidth / viewBandwidth;
         float scaleVOfsset = 7 * style::uiScale;
-        for (double freq = startFreq; freq < upperFreq; freq += range) {
+        for (double freq = startFreq; freq <= upperFreq; freq += range) {
             double xPos = fftAreaMin.x + ((freq - lowerFreq) * horizScale);
             window->DrawList->AddLine(ImVec2(roundf(xPos), fftAreaMin.y + 1),
                                       ImVec2(roundf(xPos), fftAreaMax.y),
@@ -154,34 +143,62 @@ namespace ImGui {
             window->DrawList->AddLine(ImVec2(roundf(xPos), fftAreaMax.y),
                                       ImVec2(roundf(xPos), fftAreaMax.y + scaleVOfsset),
                                       text, style::uiScale);
-            printAndScale(freq, buf);
+            printAndScale(buf, sizeof(buf), freq);
             ImVec2 txtSz = ImGui::CalcTextSize(buf);
             window->DrawList->AddText(ImVec2(roundf(xPos - (txtSz.x / 2.0)), fftAreaMax.y + txtSz.y), text, buf);
         }
 
+        // LO position
+        if (centerFreq >= lowerFreq && centerFreq <= upperFreq) {
+            auto xPos = fftAreaMin.x + ((centerFreq - lowerFreq) * horizScale);
+            auto x = roundf(xPos);
+            auto y = roundf(fftAreaMax.y) + 2;
+            window->DrawList->AddLine(ImVec2(x,   y),
+                                      ImVec2(x-5, y+5),
+                                      IM_COL32(255, 0, 0, 255), style::uiScale);
+            window->DrawList->AddLine(ImVec2(x,   y),
+                                      ImVec2(x+5, y+5),
+                                      IM_COL32(255, 0, 0, 255), style::uiScale);
+            window->DrawList->AddLine(ImVec2(x-5,   y+5),
+                                      ImVec2(x+5.1,   y+5),
+                                      IM_COL32(255, 0, 0, 255), style::uiScale);
+            y = roundf(fftAreaMin.y) - 1;
+            window->DrawList->AddLine(ImVec2(x,   y),
+                                      ImVec2(x-5, y-5),
+                                      IM_COL32(255, 0, 0, 255), style::uiScale);
+            window->DrawList->AddLine(ImVec2(x,   y),
+                                      ImVec2(x+5, y-5),
+                                      IM_COL32(255, 0, 0, 255), style::uiScale);
+            window->DrawList->AddLine(ImVec2(x-5,   y-5),
+                                      ImVec2(x+5.1,   y-5),
+                                      IM_COL32(255, 0, 0, 255), style::uiScale);
+        }
+
         // Data
         if (latestFFT != NULL && fftLines != 0) {
+            double aPos = fftAreaMax.y - ((latestFFT[0] - fftMin) * scaleFactor);
+            aPos = std::clamp<double>(aPos, fftAreaMin.y + 1, fftAreaMax.y);
             for (int i = 1; i < dataWidth; i++) {
-                double aPos = fftAreaMax.y - ((latestFFT[i - 1] - fftMin) * scaleFactor);
                 double bPos = fftAreaMax.y - ((latestFFT[i] - fftMin) * scaleFactor);
-                aPos = std::clamp<double>(aPos, fftAreaMin.y + 1, fftAreaMax.y);
                 bPos = std::clamp<double>(bPos, fftAreaMin.y + 1, fftAreaMax.y);
                 window->DrawList->AddLine(ImVec2(fftAreaMin.x + i - 1, roundf(aPos)),
                                           ImVec2(fftAreaMin.x + i, roundf(bPos)), trace, 1.0);
                 window->DrawList->AddLine(ImVec2(fftAreaMin.x + i, roundf(bPos)),
                                           ImVec2(fftAreaMin.x + i, fftAreaMax.y), shadow, 1.0);
+                aPos = bPos;
             }
         }
 
         // Hold
         if (fftHold && latestFFT != NULL && latestFFTHold != NULL && fftLines != 0) {
+            double aPos = fftAreaMax.y - ((latestFFTHold[0] - fftMin) * scaleFactor);
+            aPos = std::clamp<double>(aPos, fftAreaMin.y + 1, fftAreaMax.y);
             for (int i = 1; i < dataWidth; i++) {
-                double aPos = fftAreaMax.y - ((latestFFTHold[i - 1] - fftMin) * scaleFactor);
                 double bPos = fftAreaMax.y - ((latestFFTHold[i] - fftMin) * scaleFactor);
-                aPos = std::clamp<double>(aPos, fftAreaMin.y + 1, fftAreaMax.y);
                 bPos = std::clamp<double>(bPos, fftAreaMin.y + 1, fftAreaMax.y);
                 window->DrawList->AddLine(ImVec2(fftAreaMin.x + i - 1, roundf(aPos)),
                                           ImVec2(fftAreaMin.x + i, roundf(bPos)), traceHold, 1.0);
+                aPos = bPos;
             }
         }
 
@@ -376,6 +393,8 @@ namespace ImGui {
             ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW);
             double deltax = drag.x - lastDrag;
             lastDrag = drag.x;
+            if (deltax == 0.0)
+                return;
             double viewDelta = deltax * (viewBandwidth / (double)dataWidth);
 
             viewOffset -= viewDelta;
@@ -485,9 +504,9 @@ namespace ImGui {
 
                     if (ImGui::GetIO().KeyCtrl) {
                         ImGui::Separator();
-                        printAndScale(_vfo->generalOffset + centerFreq, buf);
+                        printAndScale(buf, sizeof(buf), _vfo->generalOffset + centerFreq);
                         ImGui::Text("Frequency: %sHz", buf);
-                        printAndScale(_vfo->bandwidth, buf);
+                        printAndScale(buf, sizeof(buf), _vfo->bandwidth);
                         ImGui::Text("Bandwidth: %sHz", buf);
                         ImGui::Text("Bandwidth Locked: %s", _vfo->bandwidthLocked ? "Yes" : "No");
 
@@ -601,21 +620,16 @@ namespace ImGui {
         if (!waterfallVisible || rawFFTs == NULL) {
             return;
         }
-        double offsetRatio = viewOffset / (wholeBandwidth / 2.0);
-        int drawDataSize;
-        int drawDataStart;
         // TODO: Maybe put on the stack for faster alloc?
         float* tempData = new float[dataWidth];
-        float pixel;
-        float dataRange = waterfallMax - waterfallMin;
-        int count = std::min<float>(waterfallHeight, fftLines);
+        const float dataRange = waterfallMax - waterfallMin;
+        const int count = std::min<float>(waterfallHeight, fftLines);
         if (rawFFTs != NULL && fftLines >= 0) {
+            fft_scaler scaler(viewOffset, viewBandwidth, wholeBandwidth, rawFFTSize, dataWidth);
             for (int i = 0; i < count; i++) {
-                drawDataSize = (viewBandwidth / wholeBandwidth) * rawFFTSize;
-                drawDataStart = (((double)rawFFTSize / 2.0) * (offsetRatio + 1)) - (drawDataSize / 2);
-                doZoom(drawDataStart, drawDataSize, rawFFTSize, dataWidth, &rawFFTs[((i + currentFFTLine) % waterfallHeight) * rawFFTSize], tempData);
+                scaler.doZoom(&rawFFTs[((i + currentFFTLine) % waterfallHeight) * rawFFTSize], tempData);
                 for (int j = 0; j < dataWidth; j++) {
-                    pixel = (std::clamp<float>(tempData[j], waterfallMin, waterfallMax) - waterfallMin) / dataRange;
+                    float pixel = (std::clamp<float>(tempData[j], waterfallMin, waterfallMax) - waterfallMin) / dataRange;
                     waterfallFb[(i * dataWidth) + j] = waterfallPallet[(int)(pixel * (WATERFALL_RESOLUTION - 1))];
                 }
             }
@@ -638,7 +652,7 @@ namespace ImGui {
         bool startVis, endVis;
         uint32_t color, colorTrans;
 
-        float height = ImGui::CalcTextSize("0").y * 2.5f;
+        float height = ImGui::CalcTextSize("0").y * 1.5f;
         float bpBottom;
 
         if (bandPlanPos == BANDPLAN_POS_BOTTOM) {
@@ -889,12 +903,10 @@ namespace ImGui {
     void WaterFall::pushFFT() {
         if (rawFFTs == NULL) { return; }
         std::lock_guard<std::recursive_mutex> lck(latestFFTMtx);
-        double offsetRatio = viewOffset / (wholeBandwidth / 2.0);
-        int drawDataSize = (viewBandwidth / wholeBandwidth) * rawFFTSize;
-        int drawDataStart = (((double)rawFFTSize / 2.0) * (offsetRatio + 1)) - (drawDataSize / 2);
 
+        fft_scaler scaler(viewOffset, viewBandwidth, wholeBandwidth, rawFFTSize, dataWidth);
         if (waterfallVisible) {
-            doZoom(drawDataStart, drawDataSize, rawFFTSize, dataWidth, &rawFFTs[currentFFTLine * rawFFTSize], latestFFT);
+            scaler.doZoom(&rawFFTs[currentFFTLine * rawFFTSize], latestFFT);
             memmove(&waterfallFb[dataWidth], waterfallFb, dataWidth * (waterfallHeight - 1) * sizeof(uint32_t));
             float pixel;
             float dataRange = waterfallMax - waterfallMin;
@@ -906,7 +918,7 @@ namespace ImGui {
             waterfallUpdate = true;
         }
         else {
-            doZoom(drawDataStart, drawDataSize, rawFFTSize, dataWidth, rawFFTs, latestFFT);
+            scaler.doZoom(rawFFTs, latestFFT);
             fftLines = 1;
         }
 
@@ -920,15 +932,27 @@ namespace ImGui {
         }
 
         if (selectedVFO != "" && vfos.size() > 0) {
-            float dummy;
             if (snrSmoothing) {
                 float newSNR = 0.0f;
-                calculateVFOSignalInfo(waterfallVisible ? &rawFFTs[currentFFTLine * rawFFTSize] : rawFFTs, vfos[selectedVFO], dummy, newSNR);
-                selectedVFOSNR = (snrSmoothingBeta*selectedVFOSNR) + (snrSmoothingAlpha*newSNR);
+                calculateVFOSignalInfo(waterfallVisible ? &rawFFTs[currentFFTLine * rawFFTSize] : rawFFTs, vfos[selectedVFO], selectedVFO_Level, newSNR);
+                selectedVFO_SNR = (snrSmoothingBeta*selectedVFO_SNR) + (snrSmoothingAlpha*newSNR);
             }
             else {
-                calculateVFOSignalInfo(waterfallVisible ? &rawFFTs[currentFFTLine * rawFFTSize] : rawFFTs, vfos[selectedVFO], dummy, selectedVFOSNR);
+                calculateVFOSignalInfo(waterfallVisible ? &rawFFTs[currentFFTLine * rawFFTSize] : rawFFTs, vfos[selectedVFO], selectedVFO_Level, selectedVFO_SNR);
             }
+        
+            // update level max
+            selectedVFO_LevelHistory.push(selectedVFO_Level);
+            if (selectedVFO_LevelHistory.size() > 10) {
+                selectedVFO_LevelHistory.pop();
+            }
+            float maxValue = -std::numeric_limits<float>::infinity();
+            std::queue<float> temp = selectedVFO_LevelHistory;
+            while (!temp.empty()) {
+                maxValue = std::max(maxValue, temp.front());
+                temp.pop();
+            }
+            selectedVFO_LevelMax = maxValue;
         }
 
         // If FFT hold is enabled, update it

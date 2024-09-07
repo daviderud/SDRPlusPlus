@@ -122,13 +122,14 @@ int sdrpp_main(int argc, char* argv[]) {
     defConfig["snrSmoothing"] = false;
     defConfig["snrSmoothingSpeed"] = 20;
     defConfig["fastFFT"] = false;
-    defConfig["fftHeight"] = 300;
-    defConfig["fftRate"] = 20;
+    defConfig["fftHeight"] = 560;
+    defConfig["fftRate"] = 15;
     defConfig["fftSize"] = 65536;
-    defConfig["fftWindow"] = 2;
-    defConfig["frequency"] = 100000000.0;
+    defConfig["fftWindow"] = 6;
+    defConfig["frequency"] = 0.0;
     defConfig["fullWaterfallUpdate"] = false;
     defConfig["max"] = 0.0;
+    defConfig["min"] = -160.0;
     defConfig["maximized"] = false;
     defConfig["fullscreen"] = false;
 
@@ -160,9 +161,10 @@ int sdrpp_main(int argc, char* argv[]) {
     defConfig["menuElements"][7]["open"] = true;
 
     defConfig["menuWidth"] = 300;
-    defConfig["min"] = -120.0;
 
     // Module instances
+    defConfig["moduleInstances"]["TEST Source"]["module"] = "test_source";
+    defConfig["moduleInstances"]["TEST Source"]["enabled"] = true;
     defConfig["moduleInstances"]["Airspy Source"]["module"] = "airspy_source";
     defConfig["moduleInstances"]["Airspy Source"]["enabled"] = true;
     defConfig["moduleInstances"]["AirspyHF+ Source"]["module"] = "airspyhf_source";
@@ -177,6 +179,8 @@ int sdrpp_main(int argc, char* argv[]) {
     defConfig["moduleInstances"]["HackRF Source"]["enabled"] = true;
     defConfig["moduleInstances"]["Hermes Source"]["module"] = "hermes_source";
     defConfig["moduleInstances"]["Hermes Source"]["enabled"] = true;
+    defConfig["moduleInstances"]["HPSDR Source"]["module"] = "hpsdr_source";
+    defConfig["moduleInstances"]["HPSDR Source"]["enabled"] = true;
     defConfig["moduleInstances"]["LimeSDR Source"]["module"] = "limesdr_source";
     defConfig["moduleInstances"]["LimeSDR Source"]["enabled"] = true;
     defConfig["moduleInstances"]["PlutoSDR Source"]["module"] = "plutosdr_source";

@@ -88,7 +88,7 @@ void MainWindow::init() {
     fft_out = (fftwf_complex*)fftwf_malloc(sizeof(fftwf_complex) * fftSize);
     fftwPlan = fftwf_plan_dft_1d(fftSize, fft_in, fft_out, FFTW_FORWARD, FFTW_ESTIMATE);
 
-    sigpath::iqFrontEnd.init(&dummyStream, 8000000, true, 1, false, 1024, 20.0, IQFrontEnd::FFTWindow::NUTTALL, acquireFFTBuffer, releaseFFTBuffer, this);
+    sigpath::iqFrontEnd.init(&dummyStream, 8000000, true, 1, false, 1024, 20.0, dsp::window::windowType::NUTTALL, acquireFFTBuffer, releaseFFTBuffer, this);
     sigpath::iqFrontEnd.start();
 
     vfoCreatedHandler.handler = vfoAddedHandler;
@@ -347,14 +347,14 @@ void MainWindow::draw() {
     if (playButtonLocked && !tmpPlaySate) { style::beginDisabled(); }
     if (playing) {
         ImGui::PushID(ImGui::GetID("sdrpp_stop_btn"));
-        if (ImGui::ImageButton(icons::STOP, btnSize, ImVec2(0, 0), ImVec2(1, 1), 5, ImVec4(0, 0, 0, 0), textCol) || ImGui::IsKeyPressed(ImGuiKey_F5, false)) {
+        if (ImGui::ImageButton(icons::STOP, btnSize, ImVec2(0, 0), ImVec2(1, 1), 5, ImVec4(0, 0, 0, 0), textCol) || (ImGui::IsKeyPressed(ImGuiKey_F5, false) && !ImGui::IsAnyItemActive())) {
             setPlayState(false);
         }
         ImGui::PopID();
     }
     else { // TODO: Might need to check if there even is a device
         ImGui::PushID(ImGui::GetID("sdrpp_play_btn"));
-        if (ImGui::ImageButton(icons::PLAY, btnSize, ImVec2(0, 0), ImVec2(1, 1), 5, ImVec4(0, 0, 0, 0), textCol) || ImGui::IsKeyPressed(ImGuiKey_F5, false)) {
+        if (ImGui::ImageButton(icons::PLAY, btnSize, ImVec2(0, 0), ImVec2(1, 1), 5, ImVec4(0, 0, 0, 0), textCol) || (ImGui::IsKeyPressed(ImGuiKey_F5, false) && !ImGui::IsAnyItemActive())) {
             setPlayState(true);
         }
         ImGui::PopID();
@@ -413,7 +413,11 @@ void MainWindow::draw() {
     ImGui::SetCursorPosX(snrPos);
     ImGui::SetCursorPosY(origY + (5.0f * style::uiScale));
     ImGui::SetNextItemWidth(snrWidth);
-    ImGui::SNRMeter((vfo != NULL) ? gui::waterfall.selectedVFOSNR : 0);
+    //ImGui::SNRMeter((vfo != NULL) ? gui::waterfall.selectedVFO_SNR : 0);
+    if (vfo != NULL)
+        ImGui::LevelMeter(gui::waterfall.selectedVFO_Level, gui::waterfall.selectedVFO_LevelMax, gui::waterfall.selectedVFO_SNR);
+    else
+        ImGui::LevelMeter(0, 0, 0);
 
     // Note: this is what makes the vertical size correct, needs to be fixed
     ImGui::SameLine();
@@ -632,10 +636,11 @@ void MainWindow::draw() {
     if (ImGui::VSliderFloat("##_7_", wfSliderSize, &bw, 1.0, 0.0, "")) {
         double factor = (double)bw * (double)bw;
 
-        // Map 0.0 -> 1.0 to 1000.0 -> bandwidth
+        const double minBandwidth = 100.0;
+        // Map 0.0 -> 1.0 to minBandwidth -> bandwidth
         double wfBw = gui::waterfall.getBandwidth();
-        double delta = wfBw - 1000.0;
-        double finalBw = std::min<double>(1000.0 + (factor * delta), wfBw);
+        double delta = wfBw - minBandwidth;
+        double finalBw = std::min<double>(minBandwidth + (factor * delta), wfBw);
 
         gui::waterfall.setViewBandwidth(finalBw);
         if (vfo != NULL) {
@@ -661,7 +666,7 @@ void MainWindow::draw() {
     ImGui::TextUnformatted("Min");
     ImGui::SetCursorPosX((ImGui::GetWindowSize().x / 2.0) - 10 * style::uiScale);
     ImGui::SetItemUsingMouseWheel();
-    if (ImGui::VSliderFloat("##_9_", wfSliderSize, &fftMin, 0.0, -160.0f, "")) {
+    if (ImGui::VSliderFloat("##_9_", wfSliderSize, &fftMin, 0.0, -200.0f, "")) {
         fftMin = std::min<float>(fftMax - 10, fftMin);
         core::configManager.acquire();
         core::configManager.conf["min"] = fftMin;

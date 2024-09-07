@@ -1,7 +1,8 @@
 #include <credits.h>
 
 namespace sdrpp_credits {
-    const char* contributors[] = {
+    const char* authors[] = {
+        "Alexandre Rouma (ON5RYZ)",
         "Aang23",
         "Alexsey Shestacov",
         "Aosync",
@@ -23,15 +24,17 @@ namespace sdrpp_credits {
         "Syne Ardwin (WI9SYN)",
         "Szymon Zakrent",
         "Youssef Touil",
-        "Zimm"
+        "Zimm",
+        "qrp73"
     };
 
     const char* libraries[] = {
         "Dear ImGui (ocornut)",
         "fftw3 (fftw.org)",
         "glfw (Camilla Löwy)",
+        "VOLK (libvolk.org)",
         "json (nlohmann)",
-        "Portable File Dialogs"
+        "Portable File Dialogs",
     };
 
     const char* hardwareDonators[] = {

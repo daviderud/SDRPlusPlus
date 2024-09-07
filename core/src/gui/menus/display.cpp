@@ -32,10 +32,31 @@ namespace displaymenu {
     OptionList<int, int> fftSizes;
     OptionList<float, float> uiScales;
 
-    const IQFrontEnd::FFTWindow fftWindowList[] = {
-        IQFrontEnd::FFTWindow::RECTANGULAR,
-        IQFrontEnd::FFTWindow::BLACKMAN,
-        IQFrontEnd::FFTWindow::NUTTALL
+    const int FFTSizes[] = {
+        1048576,
+        524288,
+        262144,
+        131072,
+        65536,
+        32768,
+        16384,
+        8192,
+        4096,
+        2048,
+        1024
+    };
+    std::string FFTSizesTxt;
+
+    int fftSizeId = 0;
+
+    const dsp::window::windowType fftWindowList[] = {
+        dsp::window::windowType::RECTANGULAR,
+        dsp::window::windowType::HAMMING,
+        dsp::window::windowType::HANN,
+        dsp::window::windowType::BLACKMAN,
+        dsp::window::windowType::NUTTALL,
+        dsp::window::windowType::BLACKMAN_HARRIS4,
+        dsp::window::windowType::BLACKMAN_HARRIS7,
     };
 
     void updateFFTSpeeds() {
@@ -78,17 +99,26 @@ namespace displaymenu {
         fullWaterfallUpdate = core::configManager.conf["fullWaterfallUpdate"];
         gui::waterfall.setFullWaterfallUpdate(fullWaterfallUpdate);
 
-        fftSizeId = fftSizes.valueId(65536);
-        int size = core::configManager.conf["fftSize"];
-        if (fftSizes.keyExists(size)) {
-            fftSizeId = fftSizes.keyId(size);
+        int fftSizesCount = sizeof(FFTSizes)/sizeof(int);
+        fftSizeId = fftSizesCount / 2;
+        int fftSize = core::configManager.conf["fftSize"];
+
+        char buf[256];
+        FFTSizesTxt = "";
+        for (int i=0; i < fftSizesCount; i++) {
+            sprintf(buf, "%d", FFTSizes[i]);
+            FFTSizesTxt += buf;
+            FFTSizesTxt += '\0';
+            if (fftSize == FFTSizes[i]) {
+                fftSizeId = i;
+            }
         }
         sigpath::iqFrontEnd.setFFTSize(fftSizes.value(fftSizeId));
 
         fftRate = core::configManager.conf["fftRate"];
         sigpath::iqFrontEnd.setFFTRate(fftRate);
 
-        selectedWindow = std::clamp<int>((int)core::configManager.conf["fftWindow"], 0, (sizeof(fftWindowList) / sizeof(IQFrontEnd::FFTWindow)) - 1);
+        selectedWindow = std::clamp<int>((int)core::configManager.conf["fftWindow"], 0, (sizeof(fftWindowList) / sizeof(dsp::window::windowType)) - 1);
         sigpath::iqFrontEnd.setFFTWindow(fftWindowList[selectedWindow]);
 
         gui::menu.locked = core::configManager.conf["lockMenuOrder"];
@@ -121,7 +151,7 @@ namespace displaymenu {
     }
 
     void checkKeybinds() {
-        if (ImGui::IsKeyPressed(ImGuiKey_F6, false)) {
+        if (ImGui::IsKeyPressed(ImGuiKey_F6, false) && !ImGui::IsAnyItemActive()) {
             setWaterfallShown(!showWaterfall);
         }
     }
@@ -214,8 +244,8 @@ namespace displaymenu {
 
         ImGui::LeftLabel("FFT Size");
         ImGui::SetNextItemWidth(menuWidth - ImGui::GetCursorPosX());
-        if (ImGui::Combo("##sdrpp_fft_size", &fftSizeId, fftSizes.txt)) {
-            sigpath::iqFrontEnd.setFFTSize(fftSizes.value(fftSizeId));
+        if (ImGui::Combo("##sdrpp_fft_size", &fftSizeId, FFTSizesTxt.c_str())) {
+            sigpath::iqFrontEnd.setFFTSize(FFTSizes[fftSizeId]);
             core::configManager.acquire();
             core::configManager.conf["fftSize"] = fftSizes.key(fftSizeId);
             core::configManager.release(true);
@@ -223,7 +253,7 @@ namespace displaymenu {
 
         ImGui::LeftLabel("FFT Window");
         ImGui::SetNextItemWidth(menuWidth - ImGui::GetCursorPosX());
-        if (ImGui::Combo("##sdrpp_fft_window", &selectedWindow, "Rectangular\0Blackman\0Nuttall\0")) {
+        if (ImGui::Combo("##sdrpp_fft_window", &selectedWindow, "Rectangular\0Hamming\0Hann\0Blackman\0Nuttall\0Blackman-Harris-4\0Blackman-Harris-7\0")) {
             sigpath::iqFrontEnd.setFFTWindow(fftWindowList[selectedWindow]);
             core::configManager.acquire();
             core::configManager.conf["fftWindow"] = selectedWindow;

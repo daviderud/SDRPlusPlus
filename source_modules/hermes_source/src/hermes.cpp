@@ -173,8 +173,7 @@ namespace hermes {
             if (len <= 0) { break; }
 
             // Ignore anything that's not a USB packet
-            // TODO: Gotta check the endpoint
-            if (htons(pkt->hdr.signature) != HERMES_METIS_SIGNATURE || pkt->hdr.type != METIS_PKT_USB) {
+            if (len < 8 || htons(pkt->hdr.signature) != HERMES_METIS_SIGNATURE || pkt->hdr.type != METIS_PKT_USB) {
                 continue;
             }
 
@@ -231,6 +230,13 @@ namespace hermes {
         *(uint16_t*)&discoveryPkt[0] = htons(HERMES_METIS_SIGNATURE);
         discoveryPkt[2] = METIS_PKT_DISCOVER;
 
+        net::Address baddr("255.255.255.255", 1024);
+        for (int i = 0; i < HERMES_METIS_REPEAT; i++) {
+            flog::debug("HERMES: send discovery for {0}:{1}", baddr.getIPStr(), baddr.getPort());
+            sock->send(discoveryPkt, sizeof(discoveryPkt), &baddr);
+        }
+
+#if 0
         // Get interface list
         auto ifaces = net::listInterfaces();
 
@@ -241,6 +247,7 @@ namespace hermes {
                 sock->send(discoveryPkt, sizeof(discoveryPkt), &baddr);
             }
         }
+#endif
 
         // Await all responses
         std::vector<Info> devices;
