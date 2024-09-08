@@ -47,7 +47,7 @@ namespace displaymenu {
     };
     std::string FFTSizesTxt;
 
-    int fftSizeId = 0;
+    //int fftSizeId = 0;
 
     const dsp::window::windowType fftWindowList[] = {
         dsp::window::windowType::RECTANGULAR,

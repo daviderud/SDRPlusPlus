@@ -2,9 +2,6 @@
 #include <string.h>
 #include <codecvt>
 #include <stdexcept>
-#include <utils/flog.h>
-#include <arpa/inet.h>
-
 
 #ifdef _WIN32
 #define WOULD_BLOCK (WSAGetLastError() == WSAEWOULDBLOCK)
@@ -387,7 +384,7 @@ namespace net {
         return connect(Address(host, port));
     }
 
-    std::shared_ptr<Socket> openudp(const Address& raddr, const Address& laddr, bool isBroadcast) {
+    std::shared_ptr<Socket> openudp(const Address& raddr, const Address& laddr, bool allowBroadcast) {
         // Init library if needed
         init();
 
@@ -395,33 +392,14 @@ namespace net {
         SockHandle_t s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
         // If the remote address is multicast, allow multicast connections
-#ifdef _WIN32
-        const char broadcastEnable = isBroadcast ? 1 : 0;
-#else
-        int broadcastEnable = isBroadcast ? 1 : 0;
-#endif
-        // set option SO_BROADCAST
-        if (setsockopt(s, SOL_SOCKET, SO_BROADCAST, &broadcastEnable, sizeof(broadcastEnable)) == -1) {
+        #ifdef _WIN32
+                const char enable = allowBroadcast;
+        #else
+                int enable = allowBroadcast;
+        #endif
+        if (setsockopt(s, SOL_SOCKET, SO_BROADCAST, &enable, sizeof(int)) < 0) {
             closeSocket(s);
-            throw std::runtime_error("Could not set SO_BROADCAST option");
-            return NULL;
-        }
-#ifdef _WIN32
-        const char reuseAddrEnable = 1;
-#else
-        int reuseAddrEnable = 1;
-#endif
-        // set option SO_REUSEADDR
-        if (setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &reuseAddrEnable, sizeof(reuseAddrEnable)) == -1) {
-            closeSocket(s);
-            throw std::runtime_error("Could not set SO_REUSEADDR option");
-            return NULL;
-        }
-        // set option SO_RCVBUF = 16 MB
-        int receiveBufferSize = 16*1024*1024;
-        if (setsockopt(s, SOL_SOCKET, SO_RCVBUF, &receiveBufferSize, sizeof(receiveBufferSize)) != 0) {
-            closeSocket(s);
-            throw std::runtime_error("Could not set SO_RCVBUF option");
+            throw std::runtime_error("Could not enable broadcast on socket");
             return NULL;
         }
 
@@ -436,33 +414,15 @@ namespace net {
         return std::make_shared<Socket>(s, &raddr);
     }
 
-    std::shared_ptr<Socket> openudp(std::string rhost, int rport, const Address& laddr, bool isBroadcast) {
-        return openudp(Address(rhost, rport), laddr, isBroadcast);
+    std::shared_ptr<Socket> openudp(std::string rhost, int rport, const Address& laddr, bool allowBroadcast) {
+        return openudp(Address(rhost, rport), laddr, allowBroadcast);
     }
 
-    std::shared_ptr<Socket> openudp(const Address& raddr, std::string lhost, int lport, bool isBroadcast) {
-        return openudp(raddr, Address(lhost, lport), isBroadcast);
+    std::shared_ptr<Socket> openudp(const Address& raddr, std::string lhost, int lport, bool allowBroadcast) {
+        return openudp(raddr, Address(lhost, lport), allowBroadcast);
     }
 
-    std::shared_ptr<Socket> openudp(std::string rhost, int rport, std::string lhost, int lport, bool isBroadcast) {
-        return openudp(Address(rhost, rport), Address(lhost, lport), isBroadcast);
-    }
-
-    void enum_net_ifaces(std::function<void(const std::string ifa_name, const std::string ifa_addr)> callback) {
-        struct ifaddrs* ifAddrStruct = nullptr;
-        if (getifaddrs(&ifAddrStruct) == -1) {
-            flog::error("net::enum_net_ifaces(): getifaddrs failed");
-            return;
-        }
-        // Iterate through interfaces and send broadcast on each one
-        for (struct ifaddrs* ifa = ifAddrStruct; ifa != nullptr; ifa = ifa->ifa_next) {
-            if (ifa->ifa_addr && ifa->ifa_addr->sa_family == AF_INET) {
-                std::string ipAddress = inet_ntoa(((struct sockaddr_in*)ifa->ifa_addr)->sin_addr);
-                std::string ifaName = ifa->ifa_name;
-                callback(ifaName, ipAddress);
-            }
-        }
-        // Free memory allocated by getifaddrs
-        freeifaddrs(ifAddrStruct);
+    std::shared_ptr<Socket> openudp(std::string rhost, int rport, std::string lhost, int lport, bool allowBroadcast) {
+        return openudp(Address(rhost, rport), Address(lhost, lport), allowBroadcast);
     }
 }

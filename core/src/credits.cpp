@@ -1,7 +1,7 @@
 #include <credits.h>
 
 namespace sdrpp_credits {
-    const char* authors[] = {
+    const char* contributors[] = {
         "Alexandre Rouma (ON5RYZ)",
         "Aang23",
         "Alexsey Shestacov",
