@@ -8,6 +8,7 @@
 #include <utils/event.h>
 
 #include <utils/opengl_include_code.h>
+#include <algorithm>
 
 #define WATERFALL_RESOLUTION 1000000
 

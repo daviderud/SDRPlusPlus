@@ -17,6 +17,7 @@
 #pragma once
 #include <cmath>
 #include <vector>
+#include <algorithm>
 
 class fft_scaler {
     size_t   _outSize;
@@ -54,7 +55,7 @@ public:
                 auto i1 = (int)roundf(f1);
                 auto maxVal = data[i0];
                 for (auto j=i0+1; j < i1; j++) {
-                    maxVal = std::max(maxVal, data[j]);
+                    maxVal = std::max<float>(maxVal, data[j]);
                 }
                 *out++ = maxVal;
                 f0 = f1;

@@ -949,7 +949,7 @@ namespace ImGui {
             float maxValue = -std::numeric_limits<float>::infinity();
             std::queue<float> temp = selectedVFO_LevelHistory;
             while (!temp.empty()) {
-                maxValue = std::max(maxValue, temp.front());
+                maxValue = std::max<float>(maxValue, temp.front());
                 temp.pop();
             }
             selectedVFO_LevelMax = maxValue;
