@@ -45,8 +45,8 @@ namespace credits {
         ImGui::TextUnformatted("Portions of this software was written by the following authors:");
         ImGui::Spacing();
         ImGui::Columns(3, "CreditColumns", true);
-        for (int i = 0; i < sdrpp_credits::authorsCount; i++) {
-            ImGui::BulletText("%s", sdrpp_credits::authors[i]);
+        for (int i = 0; i < sdrpp_credits::contributorCount; i++) {
+            ImGui::BulletText("%s", sdrpp_credits::contributors[i]);
             if ((i % 10)==9) ImGui::NextColumn();
         }
         ImGui::Columns(1, "CreditColumnsEnd", true);
@@ -57,7 +57,7 @@ namespace credits {
         ImGui::TextUnformatted("This software using the following libraries:");
         ImGui::Spacing();
         ImGui::Columns(3, "LibrariesColumns", true);
-        for (int i = 0; i < sdrpp_credits::librariesCount; i++) {
+        for (int i = 0; i < sdrpp_credits::libraryCount; i++) {
             ImGui::BulletText("%s", sdrpp_credits::libraries[i]);
             if ((i % 4)==3) ImGui::NextColumn();
         }
