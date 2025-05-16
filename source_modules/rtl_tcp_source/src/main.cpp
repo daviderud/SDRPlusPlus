@@ -15,7 +15,7 @@ SDRPP_MOD_INFO{
     /* Name:            */ "rtl_tcp_source",
     /* Description:     */ "RTL-TCP source module for SDR++",
     /* Author:          */ "Ryzerth",
-    /* Version:         */ 1, 1, 0,
+    /* Version:         */ 1, 1, 1,
     /* Max instances    */ 1
 };
 
@@ -38,6 +38,8 @@ public:
         samplerates.define(2.56e6, "2.56MHz", 2.56e6);
         samplerates.define(2.88e6, "2.88MHz", 2.88e6);
         samplerates.define(3.2e6, "3.2MHz", 3.2e6);
+        samplerates.define(2.5e6, "2.5MHz (AirSpy_TCP)", 2.5e6);
+        samplerates.define(10e6, "10MHz  (AirSpy_TCP)", 10e6);
 
         // Define direct sampling modes
         directSamplingModes.define(0, "Disabled", 0);

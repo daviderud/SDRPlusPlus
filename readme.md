@@ -15,7 +15,7 @@ With respect to the original hotkeys (https://github.com/AlexandreRouma/SDRPlusP
 ## Binaries
 
 Get them from here: https://github.com/daviderud/SDRPlusPlus/releases/tag/nightly
-
+The binaries include the compiled bookmarks manager module.
 
 ## Compiling
 The bookmarks manager (https://github.com/darauble/bookmark_manager) is not included in the source code here. 
