@@ -144,7 +144,6 @@ private:
         _this->client->setSampleRate(_this->sampleRate);
         _this->client->setPPM(_this->ppm);
         _this->client->setDirectSampling(_this->directSamplingId);
-        _this->client->setAGCMode(_this->rtlAGC);
         _this->client->setBiasTee(_this->biasTee);
         _this->client->setOffsetTuning(_this->offsetTuning);
         if (_this->tunerAGC) {
@@ -154,6 +153,7 @@ private:
             _this->client->setGainMode(1);
             _this->client->setGainIndex(_this->gain);
         }
+        _this->client->setAGCMode(_this->rtlAGC);
 
         _this->running = true;
         flog::info("RTLTCPSourceModule '{0}': Start!", _this->name);

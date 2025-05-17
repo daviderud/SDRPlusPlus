@@ -6,6 +6,7 @@ Additional features:
 - Bookmarks manager (https://github.com/darauble/bookmark_manager) in place of the standard Frequency Manager;
 - SSB (USB and LSB) max bandwidth 24 kHz in place of 12 kHz (from https://github.com/ericek111/SDRPlusPlus/tree/om2lt);
 - Sliders operating with mouse wheel (from https://github.com/qrp73/SDRPP/);
+- RTL-TCP source: added support for airspy_TCP software (https://github.com/MihajloPi/airspy_tcp). Use "RTL AGC" flag to activate Airspy's LNA and Mixer AGCs. 
 
 Key bindings:
 With respect to the original hotkeys (https://github.com/AlexandreRouma/SDRPlusPlus/wiki/UI-Controls#main-ui):
