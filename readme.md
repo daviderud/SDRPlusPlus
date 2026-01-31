@@ -7,6 +7,7 @@ Additional features:
 - SSB (USB and LSB) max bandwidth 24 kHz in place of 12 kHz (from https://github.com/ericek111/SDRPlusPlus/tree/om2lt);
 - Sliders operating with mouse wheel (from https://github.com/qrp73/SDRPP/);
 - RTL-TCP source: added support for airspy_TCP software (https://github.com/MihajloPi/airspy_tcp). Use "RTL AGC" flag to activate Airspy's LNA and Mixer AGCs. 
+- Added detailed Netherlands frequency band plan with more detailed info (derived mostly from https://github.com/Arrin-KN1E/SDR-Band-Plans/, but checked against Netherlands public resources).
 
 Key bindings:
 With respect to the original hotkeys (https://github.com/AlexandreRouma/SDRPlusPlus/wiki/UI-Controls#main-ui):
@@ -23,7 +24,14 @@ The bookmarks manager (https://github.com/darauble/bookmark_manager) is not incl
 
 Perform this command in the folder /SDRPlusPlus/misc_modules/:
 
+```
 git clone https://github.com/darauble/bookmark_manager
+```
 
-Follow the instructions given here (https://github.com/AlexandreRouma/SDRPlusPlus)
+Follow the instructions given here (https://github.com/AlexandreRouma/SDRPlusPlus),
+with the following exception (tried in Jan 2026):
+
+```
+cmake .. "-DCMAKE_TOOLCHAIN_FILE=../../vcpkg/scripts/buildsystems/vcpkg.cmake"  "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" -G "Visual Studio 16 2019"
+```
 
