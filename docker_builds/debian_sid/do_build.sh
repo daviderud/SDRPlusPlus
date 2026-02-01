@@ -53,15 +53,15 @@ make -j2
 make install
 cd ../../
 
-# Install libhydrasdr
-git clone https://github.com/hydrasdr/rfone_host
-cd rfone_host
-mkdir build
-cd build
-cmake .. -DCMAKE_POLICY_VERSION_MINIMUM=3.5
-make -j2
-make install
-cd ../../
+# # Install libhydrasdr
+# git clone https://github.com/hydrasdr/rfone_host
+# cd rfone_host
+# mkdir build
+# cd build
+# cmake .. -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+# make -j2
+# make install
+# cd ../../
 
 cd SDRPlusPlus
 mkdir build
