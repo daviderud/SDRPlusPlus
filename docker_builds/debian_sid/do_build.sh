@@ -58,7 +58,7 @@ git clone https://github.com/hydrasdr/rfone_host
 cd rfone_host
 mkdir build
 cd build
-cmake ..
+cmake .. -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 make -j2
 make install
 cd ../../
