@@ -686,7 +686,7 @@ jobs:
           uses: actions/download-artifact@v4
 
         - name: Update Nightly
-          run: gh release upload nightly sdrpp_all/* -R ${{github.repository}} --clobber --created-at "$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          run: gh release upload nightly sdrpp_all/* -R ${{github.repository}} --clobber
 
     check_spelling:
         runs-on: ubuntu-latest
