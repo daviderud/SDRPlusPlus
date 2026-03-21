@@ -6,7 +6,7 @@ file(GLOB SRC "src/*.cpp")
 include(${SDRPP_MODULE_CMAKE})
 
 if (MSVC)
-    target_link_directories(hydrasdr_source PRIVATE "C:/Program Files/hydrasdr-host/bin/")
+    target_link_directories(hydrasdr_source PRIVATE "C:/Program Files/hydrasdr-host/lib/")
 
     target_include_directories(hydrasdr_source PUBLIC "C:/Program Files/hydrasdr-host/include/libhydrasdr")
 
