@@ -1609,134 +1609,86 @@
         },
         {
             "start": 137000000,
-            "end": 137040000,
+            "end": 137025000,
             "type": "satellite1",
             "name": "Satellite"
         },
         {
-            "start": 137040000,
-            "end": 137080000,
-            "type": "satellite",
-            "name": "| METEOR"
-        },
-        {
-            "start": 137080000,
-            "end": 137120000,
-            "type": "satellite",
-            "name": "NOAA-19"
-        },
-        {
-            "start": 137120000,
-            "end": 137160000,
-            "type": "satellite",
-            "name": "METEOR |"
-        },
-        {
-            "start": 137160000,
+            "start": 137025000,
             "end": 137175000,
-            "type": "satellite1",
-            "name": "Satellite"
+            "type": "satellite",
+            "name": "Meteor M2-2"
         },
         {
             "start": 137175000,
             "end": 137327500,
-            "type": "satellite",
+            "type": "satellite1",
             "name": "ORB. Seg. 1"
         },
         {
             "start": 137327500,
-            "end": 137367000,
-            "type": "satellite1",
-            "name": "DSB NOAA-15 and NOAA-18"
-        },
-        {
-            "start": 137367000,
             "end": 137422500,
-            "type": "satellite1",
+            "type": "satellite",
             "name": "Satellite"
         },
         {
             "start": 137422500,
             "end": 137472500,
-            "type": "satellite",
+            "type": "satellite1",
             "name": "ORB. Seg. 2"
         },
         {
             "start": 137472500,
             "end": 137535000,
-            "type": "satellite1",
+            "type": "satellite",
             "name": "Satellite"
         },
         {
             "start": 137535000,
             "end": 137585000,
-            "type": "satellite",
+            "type": "satellite1",
             "name": "Orbcomm Gateway"
         },
         {
             "start": 137585000,
-            "end": 137600000,
-            "type": "satellite1",
-            "name": "Satellite"
-        },
-        {
-            "start": 137600000,
-            "end": 137640000,
-            "type": "satellite",
-            "name": "NOAA-15"
-        },
-        {
-            "start": 137640000,
             "end": 137650000,
-            "type": "satellite1",
+            "type": "satellite",
             "name": "Satellite"
         },
         {
             "start": 137650000,
             "end": 137750000,
-            "type": "satellite",
+            "type": "satellite1",
             "name": "ORB. Seg. 3"
         },
         {
             "start": 137750000,
-            "end": 137753000,
-            "type": "satellite1",
-            "name": "Satellite"
-        },
-        {
-            "start": 137753000,
-            "end": 137787000,
-            "type": "satellite",
-            "name": "DSB NOAA-19"
-        },
-        {
-            "start": 137787000,
             "end": 137787500,
-            "type": "satellite1",
+            "type": "satellite",
             "name": "Satellite"
         },
         {
             "start": 137787500,
             "end": 137812500,
-            "type": "satellite",
+            "type": "satellite1",
             "name": "ORB. Seg. 4"
         },
         {
             "start": 137812500,
-            "end": 137892500,
-            "type": "satellite1",
+            "end": 137825000,
+            "type": "satellite",
             "name": "Satellite"
         },
         {
-            "start": 137892500,
-            "end": 137932500,
-            "type": "satellite",
-            "name": "NOAA-18"
+            "start": 137825000,
+            "end": 137975000,
+            "type": "satellite1",
+            "name": "Meteor M2-2"
         },
         {
-            "start": 137932500,
+            "start": 137975000,
             "end": 138000000,
-            "type": "satellite1",
+            "type": "satellite",
             "name": "Satellite"
         },
         {
